@@ -1,14 +1,29 @@
 #!/bin/sh
 #
 # Slackware build script for TwoLAME
-# Written by Georgi D. Sotirov <gdsotirov@dir.bg>
-# Visit SlackPack at http://sotirov-bg.net/slackpack/
+# Copyright (C) 2008,2010,2012 Georgi D. Sotirov <gdsotirov@dir.bg>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# 
+# $Id: twolame.SlackBuild,v 1.3 2012/09/30 21:24:06 gsotirov Exp $
 #
 
-. ../slack-package.conf
+. ../../slack-package.conf
 
 NAME=twolame
-VERSION=0.3.12
+VERSION=0.3.13
 BUILD=${BUILD:-1}
 ARCH=${ARCH:-i486}
 
@@ -34,7 +49,7 @@ mkdir -p $PKG
 
 # Extract the sources
 cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 1
+tar -xvf $CWD/$NAME-$VERSION.tar.?z* || exit 3
 cd $SRC
 fix_source
 
@@ -44,23 +59,21 @@ CXXFLAGS=$SLKCFLAGS \
 ./configure --build=$ARCH-slackware-linux \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
+            --libdir=/usr/lib${LIBDIRSUFFIX} \
             --sysconfdir=/etc \
             --mandir=/usr/man \
             --docdir=/usr/doc/$NAME-$VERSION \
             --enable-shared=yes \
-            --enable-static=no || exit 2
+            --enable-static=no || exit 4
 
 # Build & install
-make -j4 || exit 3
-make DESTDIR=$PKG install || exit 4
+make -j4 || exit 5
+make DESTDIR=$PKG install || exit 6
 
 # Prepare
 bin_perms $PKG
 ( cd $PKG; strip_bin; strip_lib )
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
-mv $PKG/usr/share/doc/$NAME/html $PKG/usr/doc/$NAME-$VERSION
-mv $PKG/usr/share/doc/$NAME/*.txt $PKG/usr/doc/$NAME-$VERSION
-rm -rf $PKG/usr/share
 gzip_man $PKG
 
 install -m 755 -d $PKG/install
