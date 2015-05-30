@@ -1,5 +1,5 @@
 flac >= 1.2.1
-glibc-solibs >= 2.15
+glibc-solibs >= 2.17
 libogg >= 1.3.0
 libsndfile >= 1.0.25
 libvorbis >= 1.3.3
