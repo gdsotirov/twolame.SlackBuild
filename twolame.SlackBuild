@@ -5,12 +5,12 @@
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
 
-. ../slack-package.conf
+. ../../slack-package.conf
 
 NAME=twolame
 VERSION=0.3.12
-BUILD=${BUILD:-1}
 ARCH=${ARCH:-i486}
+BUILD=${BUILD:-1}
 
 CWD=${CWD:-`pwd`}
 TMP=${TMP:-/tmp}
@@ -34,7 +34,7 @@ mkdir -p $PKG
 
 # Extract the sources
 cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 1
+tar -xvf $CWD/$NAME-$VERSION.tar.gz || exit 3
 cd $SRC
 fix_source
 
@@ -44,15 +44,16 @@ CXXFLAGS=$SLKCFLAGS \
 ./configure --build=$ARCH-slackware-linux \
             --host=$ARCH-slackware-linux \
             --prefix=/usr \
+            --libdir=/usr/lib${LIBDIRSUFFIX} \
             --sysconfdir=/etc \
             --mandir=/usr/man \
             --docdir=/usr/doc/$NAME-$VERSION \
             --enable-shared=yes \
-            --enable-static=no || exit 2
+            --enable-static=no || exit 4
 
 # Build & install
-make -j4 || exit 3
-make DESTDIR=$PKG install || exit 4
+make -j4 || exit 5
+make DESTDIR=$PKG install || exit 6
 
 # Prepare
 bin_perms $PKG
